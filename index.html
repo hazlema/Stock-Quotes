@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>Stock Quotes</title>
+    <script type="text/javascript" src="js/moo.js"></script>
+    <script type="text/javascript" src="js/moo-more.js"></script>
+    <script type="text/javascript" src="js/yqlxml.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="css/default.css" />
+	<script type="text/javascript" >
+		window.addEvent('domready', function(){
+			quotes = new HtmlTable({headers: ['Symbol', 'Name', 'Last', 'Change', 'Open', 'Low', 'Volume']});
+			document.id('quotes').grab(quotes, 'top');
+
+			['t', 'msft', 'abt', 'pfe'].each(function(symbol){
+			    url = "http://www.webservicex.net/stockquote.asmx/GetQuote?symbol=" + symbol;
+			    new Request.YQLxml(url, {
+			        onSuccess: function(xml) {
+			            quotes.push([xml.documentElement.getElementsByTagName('Symbol')[0].textContent,
+			            		     xml.documentElement.getElementsByTagName('Name')[0].textContent,
+			                         xml.documentElement.getElementsByTagName('Last')[0].textContent,
+			                         xml.documentElement.getElementsByTagName('Change')[0].textContent,
+			                         xml.documentElement.getElementsByTagName('Open')[0].textContent,
+			                         xml.documentElement.getElementsByTagName('Low')[0].textContent,
+			                         xml.documentElement.getElementsByTagName('Volume')[0].textContent]);
+			        }
+			    }).send();
+			});
+  		});
+	</script>
+</head>
+<body>
+	<h1>Stock Quotes</h1>
+	<div id="quotes"></div>
+</body>
+</html>
